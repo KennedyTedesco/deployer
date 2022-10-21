@@ -48,6 +48,7 @@ namespace Deployer;
 set('cachetool', '');
 set('cachetool_url', 'https://github.com/gordalina/cachetool/releases/download/7.0.0/cachetool.phar');
 set('cachetool_args', '');
+set('cachetool_use_sudo', false);
 set('bin/cachetool', function () {
     if (!test('[ -f {{release_or_current_path}}/cachetool.phar ]')) {
         run("cd {{release_or_current_path}} && curl -sLO {{cachetool_url}}");
@@ -72,7 +73,8 @@ set('cachetool_options', function () {
  */
 desc('Clears OPcode cache');
 task('cachetool:clear:opcache', function () {
-    run("cd {{release_or_current_path}} && {{bin/php}} {{bin/cachetool}} opcache:reset {{cachetool_options}}");
+    $sudo = get('cachetool_use_sudo') ? 'sudo ' : '';
+    run("cd {{release_or_current_path}} && {$sudo}{{bin/php}} {{bin/cachetool}} opcache:reset {{cachetool_options}}");
 });
 
 /**
@@ -80,7 +82,8 @@ task('cachetool:clear:opcache', function () {
  */
 desc('Clears APCu system cache');
 task('cachetool:clear:apcu', function () {
-    run("cd {{release_or_current_path}} && {{bin/php}} {{bin/cachetool}} apcu:cache:clear {{cachetool_options}}");
+    $sudo = get('cachetool_use_sudo') ? 'sudo ' : '';
+    run("cd {{release_or_current_path}} && {$sudo}{{bin/php}} {{bin/cachetool}} apcu:cache:clear {{cachetool_options}}");
 });
 
 /**
@@ -88,5 +91,6 @@ task('cachetool:clear:apcu', function () {
  */
 desc('Clears file status and realpath caches');
 task('cachetool:clear:stat', function () {
-    run("cd {{release_or_current_path}} && {{bin/php}} {{bin/cachetool}} stat:clear {{cachetool_options}}");
+    $sudo = get('cachetool_use_sudo') ? 'sudo ' : '';
+    run("cd {{release_or_current_path}} && {$sudo}{{bin/php}} {{bin/cachetool}} stat:clear {{cachetool_options}}");
 });
